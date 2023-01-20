@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Series index{% endblock %}
+
+{% block body %}
+    <div class="my-4 flex flex-wrap items-center justify-between w-full">
+        <div class="flex justify-between items-center">
+            {% if series.isSorted('ser.title') and series.getDirection() == 'asc' %}
+                <div class="button red">{{ knp_pagination_sortable(series, 'Z-A', 'ser.title', {'defaultDirection' : 'desc'}) }}</div>
+            {% else %}
+                <div class="button red">{{ knp_pagination_sortable(series, 'A-Z', 'ser.title', {'defaultDirection' : 'asc'}) }}</div>
+            {% endif %}
+            
+            {% if series.isSorted('ser.yearStart') and series.getDirection() == 'asc' %}
+                <div class="button red">{{ knp_pagination_sortable(series, 'Recent Releases', 'ser.yearStart', {'defaultDirection' : 'desc'}) }}</div>
+            {% else %}
+                <div class="button red">{{ knp_pagination_sortable(series, 'Oldest Releases', 'ser.yearStart', {'defaultDirection' : 'asc'}) }}</div>
+            {% endif %}
+
+            {% if series.isSorted('ser.avg_rating') and series.getDirection() == 'asc' %}
+                <div class="button red">{{ knp_pagination_sortable(series, 'Best Rating', 'ser.avg_rating', {'defaultDirection' : 'desc'}) }}</div>
+            {% else %}
+                <div class="button red">{{ knp_pagination_sortable(series, 'Worst Rating', 'ser.avg_rating', {'defaultDirection' : 'asc'}) }}</div>
+            {% endif %}
+
+            <select name="genre" form="searchbar" class="dark:bg-neutral-700 rounded-lg px-2 py-1">
+                {% for genre in genres %}
+                    {% if selected_genre|default(null) and genre == selected_genre %} 
+                        <option value='{{ genre }}' selected>{{ genre }}</option>
+                    {% else %} 
+                        <option value='{{ genre }}'>{{ genre }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="navigation button greyButtonColor">
+            {{ knp_pagination_render(series) }}
+        </div>
+    </div>
+    <ul class="my-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+    {% for series in series %} 
+        <li>
+            <a class="flex flex-col items-center hover:scale-105 duration-150" href="{{ path('app_series_show', {'id': series.id}) }}">
+                <img class="h-[40vmin] w-full object-cover rounded-lg shadow-md" src="{{ path('app_series_poster', {'id': series.id}) }}"/>
+                <p class="text-center dark:text-slate-100">{{ series.title }}</p>
+                
+                {% if series_epcount_map[series.id]|default(null) %}
+                    <p class="text-center dark:text-slate-100">Episodes Number : {{ series_epcount_map[series.id] ?? 'undefined' }}</p>
+                {% endif %}
+            </a>
+        </li>
+    {% else %}
+        <p class="text-center my-4">No records found</p>
+    {% endfor %}
+    </ul>
+
+    <div class="flex justify-center sticky bottom-20 w-full gap-8 text-3xl text-white mt-10">
+        <a class="lg:hidden px-24 py-4 rounded-full bg-gray-600 font-bold">Preference</a>
+        {{ knp_pagination_render(series, 'tailwindcss_pagination.html.twig') }}
+    </div>
+
+{% endblock %}

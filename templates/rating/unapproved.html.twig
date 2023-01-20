@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Unapproved ratings{% endblock %}
+
+{% block body %}
+    <div class="dark:bg-neutral-800 flex flex-col justify-center items-center w-full h-full bg-grey-babar">
+        <div class="dark:bg-neutral-800 dark:text-slate-100 flex flex-col justify-center items-center w-full h-full bg-grey-babar">
+            {% for rating in ratings %}
+                {% if rating.deleted == false and rating.approved == false %}
+                    <div class="dark:bg-neutral-800 ratingContainer my-4">
+                        <div class="flex flex-row justify-between items-center">
+                            <div class="flex items-center">
+                                <p class="text-lg">{{rating.user.name }}</p>
+                                <div class="mx-2">
+                                    {% for i in 1..5 %}
+                                        {% if i <= rating.value %}
+                                            <span class="text-yellow-600 text-lg">★</span>
+                                        {% else %}
+                                            <span class="text-grey-babar text-lg">★</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p class="text-sm">{{ rating.date|ago}}</p>
+                        </div>
+                        <p class="text-gray-500">{{ rating.comment }}</p>
+
+                        <form method="post" action="{{ path('app_rating_approve', {'id': rating.id}) }}" onsubmit="return confirm('Are you sure you want to approve this review?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('approve' ~ rating.id) }}">
+                            <button class="hover:bg-green-500 w-full my-2 duration-200 shadow-lg hover:text-white-babar rounded-lg py-1 px-2 bg-grey-babar">Approve</button>
+                        </form>
+                        <form method="post" action="{{ path('app_rating_delete_logical', {'id': rating.id}) }}" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ rating.id) }}">
+                            <button class="hover:bg-red-500 w-full my-2 duration-200 shadow-lg hover:text-white-babar rounded-lg py-1 px-2 bg-grey-babar">Delete</button>
+                        </form>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

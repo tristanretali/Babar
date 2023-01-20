@@ -1,0 +1,31 @@
+{# tailwindcss Sliding pagination control implementation #}
+{% if pageCount > 1 %}
+    <div class="lg:hidden block">
+        <div class="flex flex-row items-center gap-4 w-auto text-white text-4xl">
+
+        {% if previous is defined %}
+            <div class="px-5 py-4 rounded-full bg-gray-600">
+                <a rel="prev" href="{{ path(route, query|merge({(pageParameterName): previous})) }}">←</a>
+            </div>
+        {% else %}
+            <div class="invisible px-5 py-4 rounded-full bg-gray-600">
+                <a rel="prev" href="">←</a>
+            </div>
+        {% endif %}
+
+        {% for page in pagesInRange %}
+            {% if page == current %}
+                <div class="px-6 py-4 rounded-full bg-gray-600">
+                    <a href="{{ path(route, query|merge({(pageParameterName): page})) }}">{{ page }}</a>
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        {% if next is defined %}
+            <div class="px-5 py-4 rounded-full bg-gray-600">
+                <a rel="next" href="{{ path(route, query|merge({(pageParameterName): next})) }}">→</a>
+            </div>
+        {% endif %}
+        </div>
+    </div>
+{% endif %}

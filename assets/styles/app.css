@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .button {
+    @apply text-2xl lg:text-sm duration-200 font-bold px-8 py-4 lg:px-3 lg:py-1 rounded-full cursor-pointer shadow-lg m-2 ml-0 text-white w-min whitespace-nowrap;
+  }
+  .buttonLg {
+    @apply button lg:text-lg text-4xl px-4 duration-200;
+  }
+  .wrapper {
+    @apply mx-10 lg:w-3/5 h-full my-0 lg:mx-auto flex flex-col justify-around;
+  }
+  .blue {
+    @apply bg-blue-500 hover:bg-blue-400;
+  }
+  .blueText {
+    @apply text-blue-500;
+  }
+  .red {
+    @apply bg-red-600 hover:bg-red-500;
+  }
+  .greyButtonColor {
+    @apply bg-grey-babar text-grey-text;
+  }
+  .registration {
+    @apply flex flex-row mb-2 bg-[#f2f2f2] text-[#3b3737]  text-3xl py-4 px-8 mt-4 lg:py-1 lg:px-3 lg:text-sm rounded-full drop-shadow-md w-[100%];
+  }
+  .form {
+    @apply flex flex-col justify-center lg:text-lg text-5xl w-[80vw] lg:w-[25vw];
+  }
+  .episode {
+    @apply lg:w-[38vw] lg:text-sm text-3xl w-full py-2 bg-[#f2f2f2] dark:bg-neutral-700 p-3 drop-shadow-md m-2 rounded-md;
+  }
+  .titleMd {
+    @apply lg:text-lg text-5xl;
+  }
+  .titleLg {
+    @apply lg:text-3xl text-7xl mt-2;
+  }
+  .ratingContainer {
+    @apply shadow-lg rounded-lg border border-grey-babar flex flex-col p-2;
+  }
+  .sideMenuLink {
+    @apply py-3 px-4 hover:bg-grey-text duration-150
+  }
+  .adminLink{
+    @apply pl-8 text-blue-600 hover:bg-grey-text duration-150;
+  }
+  .navigation {
+    @apply shadow-xl;
+  }
+}
+
+html {
+  background-color: #f2f2f2;
+  @apply text-xl;
+}
+
+.adminTiles:hover .adminLink{
+  display: block;
+}

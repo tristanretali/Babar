@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Index{% endblock %}
+
+{% block body %}
+    <div>
+        <div class="w-full flex justify-center">
+            <h1 class="titleMd lg:titleLg">User Index</h1>
+        </div>
+        <div class="flex justify-center flex-col">
+            <div class="my-4 flex flex-wrap">
+                <a class="button blue"  href="{{ path('app_user_new') }}">Create New</a>
+            </div>
+            <table class="border-separate border-spacing-y-2">
+                <thead>
+                    <tr class=" text-left lg:flex">
+                        <th class="hidden lg:w-1/6 lg:inline-flex p-2">Id</th>
+                        <th class="hidden lg:w-2/6 lg:inline-flex p-2">Name</th>
+                        <th class="hidden lg:w-2/6 lg:inline-flex p-2">Email</th>
+                        <th class="hidden lg:w-1/6 lg:inline-flex p-2">RegisterDate</th>
+                        <th class="hidden lg:w-1/6 lg:inline-flex p-2">Admin</th>
+                        <th class="hidden lg:w-2/6 lg:inline-flex p-2">actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr class="bg-[#f2f2f2] flex lg:mb-2  flex-col lg:flex-row lg:justify-between lg:text-left drop-shadow-md hover:bg-grey-babar dark:text-slate-100 dark:bg-[#282828] dark:hover:bg-gray-500">
+                        <td class="lg:w-1/6 hidden lg:inline-flex rounded-l-2xl md:pl-4 md:p-2">{{ user.id }}</td>
+                        <td class="lg:w-2/6 text-3xl lg:text-sm md:p-2">{{ user.name }}</td>
+                        <td class="lg:w-2/6 text-3xl lg:text-sm md:p-2">{{ user.email }}</td>
+                        <td class="lg:w-1/6 hidden lg:inline-flex md:p-2">{{ user.registerDate ? user.registerDate|date('Y-m-d H:i:s') : '' }}</td>
+                        <td class="lg:w-1/6  hidden lg:inline-flex md:p-">{{ user.admin ? 'Yes' : 'No' }}</td>
+                        <td class="lg:w-2/6 flex flex-row flex-wrap rounded-r-2xl md:p-2 md:pr-4">
+                            <a class="button blue" href="{{ path('app_user_show', {'id': user.id}) }}">Show</a>
+                            <a class="button blue" href="{{ path('app_user_edit', {'id': user.id}) }}">Edit</a>
+                            <a class="button blue" href={{ path('app_home', {
+                                '_switch_user': user.email
+                            }) }}>Impersonate</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

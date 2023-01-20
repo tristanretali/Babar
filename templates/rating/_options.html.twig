@@ -1,0 +1,8 @@
+{# Required parameters :
+    rating_path : The path to lead to
+    prompt_msg : The message to display
+#}
+<form method="post" action="{{ path('app_rating_' ~ rating_path, {'id': rating.id, 'series_id': series.id}) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token(prompt_msg|lower ~ rating.id) }}">
+    <button class="hover:bg-red-500 w-full my-2 duration-200 shadow-lg hover:text-white-babar rounded-lg py-1 px-2 bg-grey-babar">{{ prompt_msg }}</button>
+</form>

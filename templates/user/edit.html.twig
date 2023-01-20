@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block body %}
+<div class="flex flex-col justify-center items-center lg:w-100 min-h-[75vh] text-[#5b5555] dark:text-slate-100">
+    <h1 class="mb-5 lg:text-3xl titleMd">
+    {% if is_granted('ROLE_ADMIN')%}
+        Changing account details of user "{{ user.name }}"
+    {% else %}
+        Changing your account details
+    {% endif %}
+    </h1>
+    
+    {# Default form fields #}
+    {{ form_start(userTypeForm,{
+        'attr': { 'class' : 'form'}
+    }) }}
+    {{ form_row(userTypeForm.name, {
+        'attr': {'class' : 'registration'}
+    }) }}
+
+    
+    {{ form_row(userTypeForm.country, {
+        'attr': {'class' : 'registration'}
+    }) }}
+
+    {# Admin can change email and 'admin' attribute of an user #}
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ form_row(userTypeForm.email, {
+            'attr': {'class' : 'registration'}
+        }) }}
+        <div class="flex flex-row justify-center space-x-12 > * + *">
+            {{ form_row(userTypeForm.admin, {
+                'attr': {'class' : 'ml-2'}
+            }) }}
+            {{ form_row(userTypeForm.tmpPassword, {
+                'attr': {'class' : 'ml-2'},
+                'label': 'Reset password',
+            }) }}
+        </div>       
+    {% endif %}
+
+    <div class="flex justify-center">
+        {% if is_granted('ROLE_ADMIN') %}
+            <a class="buttonLg blue" href="{{ path('app_user_index') }}">Users list</a>
+        {% else %}
+            {# Only users can change their password on the following page #}
+            <a class="buttonLg red" href="{{ path('app_user_editpass', {'id': user.id}) }}">Change my password</a>
+        {% endif %}
+        <button type="submit" class="buttonLg blue">Edit</button>      
+    {{ form_end(userTypeForm) }}
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ include('user/_delete_form.html.twig') }}
+    {% endif %}
+    </div>
+</div>
+{% endblock %}

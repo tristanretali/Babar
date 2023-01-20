@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Series Management{% endblock %}
+
+{% block body %}
+    <div class="my-4 flex flex-wrap items-center justify-between w-full">
+        <div class="w-full flex justify-center">
+            <h1 class="text-3xl dark:text-slate-100">Series Index</h1>
+        </div>
+    <div class="navigation button greyButtonColor">
+        {{ knp_pagination_render(series) }}
+    </div>
+    </div>
+    <table class="border-separate border-spacing-y-2">
+        <thead>
+            <tr class="text-left dark:text-slate-100">
+                <th class="p-2">Id</th>
+                <th class="p-2">Title</th>
+                <th class="p-2">Awards</th>
+                <th class="p-2">Year Start</th>
+                <th class="p-2">Year End</th>
+                <th class="p-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for serie in series %}
+                  <tr class="bg-[#f2f2f2] drop-shadow-md hover:bg-grey-babar dark:text-slate-100 dark:bg-[#282828] dark:hover:bg-gray-500">
+                    <td class="rounded-l-2xl md:pl-4 md:p-2">{{ serie.id }}</td> 
+                    <td class="md:p-2">{{ serie.title }}</td>
+                    <td class="md:p-2">{{ serie.awards }}</td>
+                    <td class="md:p-2">{{ serie.yearStart }}</td>
+                    {% if serie.yearEnd is null %}
+                        <td class="md:p-2">In Progress</td>
+                    {% else %}
+                        <td class="md:p-2">{{ serie.yearEnd }}</td>
+                    {% endif %}
+                    <td class="flex flex-row flex-wrap rounded-r-2xl md:p-2 md:pr-4">
+                            <a class="button blue" href="{{ path('app_series_show', {'id': serie.id}) }}">Show</a>
+                            <a class="button blue" href="{{ path('app_series_edit', {'id': serie.id}) }}">Edit</a>
+                        </td>
+                  </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

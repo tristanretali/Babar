@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html class="{{ app.request.cookies.get('dark') }}">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" type="image/png" href="{{ asset('assets/images/logoBabar.png') }}" />        
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+            <script>
+                let sideMenuIsOpen = false;
+
+                function burgerMenuClick(){
+                    if (!sideMenuIsOpen){
+                        sideMenuIsOpen = true;
+                        openSideMenu();
+                    } else {
+                        sideMenuIsOpen = false;
+                        closeSideMenu();
+                    }
+                }
+
+                function openSideMenu(){
+                    document.getElementById('sideMenu').classList.remove('w-0');
+                    document.getElementById('sideMenu').classList.add('w-64');
+                }
+
+                function closeSideMenu(){
+                    document.getElementById('sideMenu').classList.remove('w-64');
+                    document.getElementById('sideMenu').classList.add('w-0');
+                }
+            </script>
+        {% endblock %}
+    </head>
+    <body class="pb-60 dark:bg-neutral-800 dark:text-slate-100 min-h-screen">
+        <nav class="flex items-center flex-col sticky top-0 z-50 bg-gradient-to-b from-grey-babar to-white-babar dark:from-neutral-800 dark:to-neutral-800 py-6 lg:py-0">
+            <header class="max-w-5xl px-4 flex justify-between lg:justify-around place-items-center w-full py-2">
+                <a href={{ path('app_home') }}>
+                    <img src="{{ asset('assets/images/logoBabarDark.png') }}" class="dark:hidden lg:w-10 w-14" alt="Babar logo"/>
+                    <img src="{{ asset('assets/images/logoBabarWhite.png') }}" class="hidden dark:block lg:w-10 w-14" alt="Babar logo"/>
+                </a>
+                <form id="searchbar" action="{{ path('app_series_index') }}" class="w-full px-10" method="GET">
+                    <input class="w-full text-xl lg:text-sm hidden lg:block bg-grey-babar py-1 px-8 rounded-full shadow placeholder:text-grey-text outline-none" type="text" placeholder="Recherche" name="search"></input>
+                </form>
+
+                <button onClick="burgerMenuClick()">
+                    <img src="{{ asset('assets/images/burgerIconWhite.svg') }}" class="mx-8 h-8 hidden dark:block" alt="Buger menu icon"/>
+                    <img src="{{ asset('assets/images/burgerIconBlack.svg') }}" class="mx-8 h-8 dark:hidden" alt="Buger menu icon"/>
+                </button>
+            </header>
+
+            <div class="px-6 w-full max-w-5xl">
+                <form form="searchbar">
+                    <input class="lg:hidden text-3xl bg-grey-babar w-full py-4 px-8 rounded-full shadow placeholder:text-grey-text outline-none" placeholder="search.."></input>
+                </form>
+            </div>
+
+            <div id="sideMenu" class="dark:bg-neutral-800 border-l border-neutral-600 fixed duration-150 ease-linear flex flex-col z-50 right-0 top-0 bg-grey-babar w-0 h-full whitespace-nowrap select-none">
+                <button onClick="burgerMenuClick()" class="hover:bg-grey-text duration-150">
+                    <img src="{{ asset('assets/images/burgerIconWhite.svg') }}" class="mx-4 my-3 h-8 hidden dark:block" alt="Buger menu icon"/>
+                    <img src="{{ asset('assets/images/burgerIconBlack.svg') }}" class="mx-4 my-3 h-8 dark:hidden" alt="Buger menu icon"/>
+                </button>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="adminTiles">
+                        <a class="sideMenuLink block" href={{ path('app_admin') }}>Admin</a>
+                        <a class="hidden adminLink" href={{ path('app_user_index') }}>Users Management</a>
+                        <a class="hidden adminLink" href={{ path('admin_series_index') }}>Series Management</a>
+                        <a class="hidden adminLink" href={{ path('app_rating_show_reported') }}>Reported Ratings</a>
+                        <a class="hidden adminLink" href={{ path('app_rating_show_unapproved') }}>Unapproved Ratings</a>
+                    </div>
+                {% endif %}
+                {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                    <a class="sideMenuLink" href={{ path('app_home', {
+                        '_switch_user': '_exit'
+                    }) }}>Exit</a>
+                {% endif %}
+                {% if app.user %}
+                    <a href={{ path('app_logout') }} class="sideMenuLink">Sign Out</a>
+                    <a href={{ path('app_user_show', {'id': app.user.id}) }} class="sideMenuLink">My Profil</a>
+                {% else %}
+                    <a href={{ path('app_login') }} class="sideMenuLink">Sign In</a>
+                    <a href={{ path('app_register') }} class="sideMenuLink">Sign Up</a>
+                {% endif %}
+                {% if app.request.cookies.get('dark') != 'dark' %}                        
+                    <a onclick="darkMode()" type="button" class="sideMenuLink" id="themeButton">Dark Mode</a>
+                {% else %}
+                    <a onclick="darkMode()" type="button" class="sideMenuLink" id="themeButton">Light Mode</a>
+                {% endif %}
+            </div>
+        </nav>
+        
+        
+        <div class="wrapper mt-4">
+        {% block body %}{% endblock %}
+        </div>
+        <script>
+            function darkMode(){
+                currentValue = document.getElementById("themeButton");
+                if(currentValue.innerHTML === "Dark Mode"){
+                    currentValue.innerHTML = "Light Mode";
+                    document.cookie = 'dark=dark';
+                    document.documentElement.className = 'dark';
+                }else if(currentValue.innerHTML === "Light Mode"){
+                    currentValue.innerHTML = "Dark Mode";
+                    document.cookie = 'dark=';
+                    document.documentElement.className = '';
+                }               
+            }
+        </script>
+    </body>
+</html>

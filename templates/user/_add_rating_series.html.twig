@@ -1,0 +1,94 @@
+{% if app.user %}
+    {% set userRating = null %}
+    {% for rating in ratings %}
+        {% if rating.user == app.user %}
+            {% set userRating = rating %}
+        {% endif %}
+    {% endfor %}
+
+    {% if userRating is not null %}
+        <h2 class="titleMd dark:text-slate-100">Leave a review</h2>
+        <div class="ratingContainer dark:text-slate-100">
+            <form class="flex flex-col" method="post" action="{{ path('app_rating_edit', {'id': userRating.id, 'series_id': series.id }) }}">
+                <label class="text-lg" for="value">Your note</label>
+                <input type="hidden" id="value" name="value" value=""></input>
+                <div class="flex flex-row my-2">
+                    {% for i in 1..5 %}
+                        {% if i <= userRating.value %}
+                            <span id="{{ i }}" onClick="updateStar({{ i }})" class="text-grey-text text-lg cursor-pointer">★</span>
+                        {% else %}
+                            <span id="{{ i }}" onClick="updateStar({{ i }})" class="text-grey-babar text-lg cursor-pointer">★</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <label class="text-lg" for="comment">Your comment</label>
+                <textarea class="my-2 dark:bg-[#393939]" id="comment" name="comment" placeholder="{{ userRating.comment }}"></textarea>
+                <button disabled id="modifyButton" class="hover:text-white-babar my-2 duration-200 shadow-lg rounded-lg py-1 px-2 bg-grey-babar opacity-50" type="submit">Modify</button>
+            </form>
+            <form method="post" action="{{ path('app_rating_delete', {'id': userRating.id, 'series_id': series.id}) }}" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ userRating.id) }}">
+                <button class="hover:bg-red-500 w-full my-2 duration-200 shadow-lg hover:text-white-babar rounded-lg py-1 px-2 bg-grey-babar">Delete</button>
+            </form>
+        </div>
+    {% else %}
+        <h2 class="titleMd">Leave a review</h2>
+        <form class="ratingContainer" method="post" action="{{ path('app_rating_new', {'id': series.id }) }}">
+            <label class="text-lg" for="value">Your note</label>
+            <input type="hidden" id="value" name="value" value=""></input>
+            <div class="flex flex-row my-2">
+                {% for i in 1..5 %}
+                <span id="{{ i }}" onClick="updateStar({{ i }})" class="text-grey-babar text-lg cursor-pointer">★</span>
+                {% endfor %}
+            </div>
+            <label class="text-lg" for="comment">Your comment</label>
+            <textarea class="my-2 dark:bg-neutral-600 dark:text-slate-100" id="comment" name="comment"></textarea>
+            <button disabled id="sendButton" class="my-2 duration-200 shadow-lg rounded-lg py-1 px-2  opacity-50" type="submit">Send</button>
+        </form>
+    {% endif %}
+    <script>
+
+        let starValue = null;
+
+        function updateStar(starId){
+            starValue = starId;
+            document.querySelector('[name=value]').value = starValue;
+            updateStars();
+
+            if (document.getElementById('sendButton') != null){
+                button = document.getElementById('sendButton');
+                if (button.disabled){
+                    setSubmitButtonEffective(document.getElementById('sendButton'));
+                }
+            }
+            
+            if (document.getElementById('modifyButton') != null){
+                button = document.getElementById('modifyButton');
+                if (button.disabled){
+                    setSubmitButtonEffective(document.getElementById('modifyButton'));
+                }
+            }
+            
+        }
+
+        function setSubmitButtonEffective(button){
+            button.disabled = false;
+            button.classList.remove('opacity-50');
+            button.classList.add('hover:bg-green-500');
+            button.classList.add('hover:text-white-babar');
+        }
+
+        function updateStars() {
+            for (let i = 1; i <= 5; i++) {
+                const star = document.getElementById(i);
+                if (i <= starValue) {
+                    star.classList.add('text-yellow-600');
+                    star.classList.remove('text-grey-babar');
+                    star.classList.remove('text-grey-text');
+                } else {
+                    star.classList.add('text-grey-babar');
+                    star.classList.remove('text-yellow-600');
+                }
+            }
+        }
+    </script>
+{% endif %}

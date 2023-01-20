@@ -1,0 +1,42 @@
+{% block rating_filters %}
+{# Display the rating filter for comments #}
+<form action="#" method="GET" class="dark:text-slate-100 pt-4">
+    <div class="flex flex-row justify-around">
+        <div class="flex flex-col">
+            <label class="titleMd" for="r_min">Minimum rating</label>
+            <div class="flex flex-row">
+                <input id="r_min_filter" name="r_min" type="range" min="0" max="4" value="0" oninput="this.nextElementSibling.value = this.value"/>
+                <output class="px-2">0</output>
+            </div>
+        </div>
+        <div class="flex flex-col">
+            <label class="titleMd" for="r_max">Maximum rating</label>
+            <div class="flex flex-row">
+                <input id="r_max_filter" name="r_max" type="range" min="1" max="5" value="5" oninput="this.nextElementSibling.value = this.value"/>
+                <output class="px-2">5</output>
+            </div>
+        </div>
+    </div>
+
+    <button class="button bg-green-600  hover:bg-green-500" id="submit_rating_filter" type="submit" value="Filter ratings">Filter ratings </button>
+</form>
+<a class="button bg-red-600 hover:bg-red-500" href="{{ path('app_series_show', {id: series.id}) }}">Clear ratings</a>
+
+
+{# Enforce that min rating value must be strictly inferior to max #}
+<script>
+    let submitButton = document.querySelector("#submit_rating_filter");
+    function validateFilters(minRat, maxRat) {
+        return minRat <= maxRat;
+    }
+    submitButton.onclick = function() {
+        let minRatInput = document.querySelector("#r_min_filter").value;
+        let maxRatInput = document.querySelector("#r_max_filter").value;
+        if (!validateFilters(minRatInput, maxRatInput)) {
+            alert("Minimum rating cannot be strictly inferior to maximum rating");
+            return false;
+        }
+        return true;
+}
+</script>
+{% endblock %}

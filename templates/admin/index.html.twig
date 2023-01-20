@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <div class="w-full flex justify-center">
+        <h1 class="lg:titleLg titleMd mb-5">Admin Dashboard</h1>
+    </div>
+    <p class="mb-10 text-4xl lg:text-lg lg:mb-2">Admin only pages:</p>
+    <ul>
+        <li class="pb-4"><a class="button blue" href="{{ path('app_user_index') }}">Users Management</a></li>
+        <li class="pb-4"><a class="button blue" href="{{ path('admin_series_index') }}">Series Management</a></li>
+        <li class="pb-4"><a class="button blue" href="{{ path('app_rating_show_reported') }}">Reported Ratings</a></li>
+        <li class="pb-4"><a class="button blue" href="{{ path('app_rating_show_unapproved') }}">Unapproved Ratings</a></li>
+    </ul>
+</div>
+{% endblock %}

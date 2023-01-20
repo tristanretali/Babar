@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Serie{% endblock %}
+
+{% block body %}
+    <div class="flex flex-col justify-center items-center lg:w-100 min-h-[75vh] text-[#5b5555]">
+        <h1 class="mb-5 lg:text-3xl text-[7vw]">Edit Serie</h1>
+        {{ form_start(editSerieForm,{
+            'attr': { 'class' : 'form'}
+        }) }}
+        {{ form_row(editSerieForm.title,{
+            'attr': { 'class' : 'registration'}
+        }) }}
+        {{ form_row(editSerieForm.awards,{
+            'attr': { 'class' : 'registration'}
+        }) }}
+        {{ form_row(editSerieForm.yearEnd,{
+            'attr': { 'class' : 'registration'}
+        }) }}
+        <div class="flex justify-center">
+            <a class="buttonLg blue" href="{{ path('admin_series_index') }}">Back to list</a>
+            <button type="submit" class="buttonLg blue">Edit</button>
+        </div>
+        {{form_end(editSerieForm)}}
+    </div>
+    <a href="{{ path('admin_series_index') }}">back to list</a>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    <div class="flex h-[75vh] w-full items-center justify-center lg:flex-row flex-col">
+      
+        <img src="assets/images/babar.svg" class="lg:w-[20vw] w-fit">
+       
+        <div class="flex flex-col text-[#5b5555] justify-center items-center">
+            <h1 class="titleLg mb-5 font-bold dark:text-slate-100 text-center">Welcome to Babar World !</h1> 
+            <p class="text-center mb-5 font-normal dark:text-slate-100 text-3xl lg:text-base">This is your ultimate destination for discovering new and exciting series. Here, you can explore a wide variety of genres, share your thoughts with other fans, and see what's trending in real-time. Our user-friendly interface makes it easy to find new shows to add to your watchlist. Plus, join our community and engage with other viewers, join in on discussions and make new friends who share your passion for TV. Don't miss out on the next big series, join Babar World today!</p>
+            <a class="buttonLg red" href="{{ path('app_series_index') }}">Discover</a>
+        <div>
+    </div>
+{% endblock %}

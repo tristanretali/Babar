@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New User{% endblock %}
+
+{% block body %}
+    <div class="flex flex-col dark:text-slate-100 justify-center items-center lg:w-100 min-h-[75vh] text-[#5b5555]">
+		<h1 class="titleLg">Create New User</h1>
+        {{ form_start(form,{
+            'attr': { 'class' : 'form'}
+        }) }}
+        {{ form_row(form.name, {
+			'attr': {'class' : 'registration'}
+		}) }}
+        {{ form_row(form.email, {
+			'attr': {'class' : 'registration'}
+		}) }}
+        {{ form_row(form.password.first,{
+        'attr': {'class' : 'registration'},
+        label: "Password"
+        }) }}
+
+        {{ form_row(form.password.second,{
+            'attr': {'class' : 'registration'},
+            label: 'Repeat password'
+        }) }}  
+        {{ form_row(form.admin, {
+			'attr': {'class' : 'ml-2'}
+		}) }}
+        {{ form_row(form.country, {
+			'attr': {'class' : 'registration'}
+		}) }}
+        {{ form_rest(form) }}
+            <div class="flex w-[100%] flex-row justify-center">
+                <a class="buttonLg blue"href="{{ path('app_user_index') }}">back to list</a>
+                <button type="submit" class="buttonLg blue">Create Account</button>
+            </div>
+        {{ form_end(form) }}
+    </div>    
+    
+{% endblock %}

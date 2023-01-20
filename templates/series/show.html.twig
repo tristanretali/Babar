@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Series{% endblock %}
+
+{% block body %}
+    <div class="lg:flex lg:flex-row w-full lg:justify-center lg:gap-8 py-4">
+        <div class="flex flex-col justify-center lg:justify-start lg:w-min lg:h-[100vh] text-[#989898] w-full">
+            <p class="px-10 lg:block hidden lg:text-sm m-2 "><a href="{{ path('app_series_index') }}">Home</a> > {{ series.title }}</p>
+            <img class="lg:max-w-[25vw]" src="{{ path('app_series_poster', {'id': series.id}) }}"></img>
+        </div>
+        <div class="my-4 flex flex-col">
+            <div class="w-full flex justify-between lg:flex-row">
+                <h1 class="titleLg w-full">{{ series.title }}</h1>
+                {% if app.user %}
+                    {% if followed %}
+                        <a class="hidden lg:block button red" href="{{ url('app_series_unfollow', {'id': series.id}) }}">Unfollow</a>
+                        <a class="fixed lg:hidden bottom-12 right-12 button red text-7xl px-7 py-2 shadow-lg shadow-gray-400" href="{{ url('app_series_unfollow', {'id': series.id}) }}">−</a>
+                    {% else %}
+                        <a class="hidden lg:block button red" href="{{ url('app_series_follow', {'id': series.id}) }}">Follow</a>
+                        <a class="fixed lg:hidden bottom-12 right-12 button red text-6xl px-3.5 py-3 shadow-lg shadow-gray-400" href="{{ url('app_series_follow', {'id': series.id}) }}">＋</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        
+            <div class="flex flex-col lg:text-sm">
+                <h2 class="text-3xl lg:text-sm">{{ series.seasons|length }} Seasons - {{ series_epcount_map[series.id]|number_format }} Episodes</h2>
+                
+                {% if average == null %}
+                <p>There is no rating for this serie.</p>
+                {% else %}
+               
+                {% set percentage = (average * 20)|round(1, 'ceil') %}
+                <div class="rounded-full h-4 w-full lg:w-64 bg-gradient-to-r from-yellow-600 to-yellow-400 justify-end flex">
+                    <div style="{{ 'width:' ~ (100 - percentage) ~ '%;' }}" class="{{ 'h-full bg-grey-babar rounded-r-full' }}"></div>
+                </div>
+                <p>Average rating : {{ average }}</p>
+                {% endif %}
+            </div>
+
+
+            <div class="pt-4">
+                <h2 class="titleMd">Resume</h2>
+                <p class="text-3xl lg:text-sm ">{{ series.plot }}</p>
+            </div> 
+
+            <div class="pt-4">
+                <h2 class="titleMd">Youtube Trailer</h2>
+                <iframe width="420" height="315" class="w-full lg:w-[30vw]" src={{series.getYoutubeTrailerEmbed()}} allow="fullscreen"></iframe> 
+            </div>            
+            
+            <div class="pt-4">
+                <h2 class="titleMd">Actors</h2>
+                <ul>
+                {% for actor in series.actor %}
+                    <li class="text-3xl lg:text-sm">{{ actor.name }}</li> 
+                {% endfor %}
+                </ul>
+            </div>
+
+            <div class="pt-4">
+                <h2 class="titleMd">Imdb</h2>
+                <a class="button greyButtonColor block" href={{ 'https://www.imdb.com/title/' ~ series.imdb }}>IMDB</a>
+            </div>       
+            
+            <div class="py-4">
+                <h2 class="titleMd">Awards</h2>
+                <p class="text-3xl lg:text-sm">{{ series.awards }}</p>
+            </div> 
+                       
+            {% for season in series.seasons|sort((a, b) => a.number <=> b.number) %}      
+                <details>
+                    <summary class="button red ">Season {{ season.number }} - {{ season.episodes|length }} episodes</summary>
+                {% for episode in season.episodes|sort((a, b) => a.number <=> b.number) %}
+                    {% if app.user %}
+                        {% if app.user.containsEpisode(episode) %}                        
+                            <div class="episode">Episode {{ episode.number }} : {{ episode.title }}<a href="{{ url('app_series_unwatched', {'id': episode.id}) }}"><p class="blueText">Watched</p></a></div>
+                        {% else %}
+                            <div class="episode">Episode {{ episode.number }} : {{ episode.title }}<a href="{{ url('app_series_watched', {'id': episode.id}) }}"><p class="blueText">Not seen</p></a></div>
+                        {% endif %}     
+                    {% else %}
+                        <div class="episode">Episode {{ episode.number }} : {{ episode.title }}</div>  
+                    {% endif %}                
+                {% endfor %}
+                </details>
+            {% endfor %}
+            
+            {% include 'user/_add_rating_series.html.twig' with {
+                'ratings': ratings,
+                'series': series,
+            } %}
+
+            {% include 'rating/_filter.html.twig' with {
+                'series': series,
+            } %}
+
+            <h2 class="titleMd dark:text-slate-100">Reviews</h2>
+
+            {% for rating in ratings %}
+                <div class="ratingContainer my-4 dark:text-slate-100">
+                    <div class="flex flex-row justify-between items-center">
+                        <div class="flex items-center">
+                            <p class="text-lg">{{rating.user.name }}</p>
+                            <div class="mx-2">
+                                {% for i in 1..5 %}
+                                    {% if i <= rating.value %}
+                                        <span class="text-yellow-600 text-lg">★</span>
+                                    {% else %}
+                                        <span class="text-grey-babar text-lg">★</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="text-sm">{{ rating.date|ago}}</p>
+                    </div>
+                    <p class="text-gray-500">{{ rating.comment }}</p>
+
+                    {# Display report button for connected users #}
+                    {% if app.user %}
+                        {% if not app.user.isAdmin() %}
+                            {% include 'rating/_options.html.twig' with {'rating_path': 'report', 'prompt_msg': 'Report'} %}
+                        {% elseif app.user.isAdmin() %} 
+                            {% if rating.reported %}
+                                {% include 'rating/_options.html.twig' with {'rating_path': 'unreport', 'prompt_msg': 'Unreport'} %}
+                            {% else %}
+                                {% include 'rating/_options.html.twig' with {'rating_path': 'report', 'prompt_msg': 'Report'} %}   
+                            {% endif %}
+                            {% include 'rating/_options.html.twig' with {'rating_path': 'delete_logical', 'prompt_msg': 'Delete'} %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+            {% if app.user and app.user.containsSeries(series)  %}
+            <h2 class="titleMd">User who followed the Series</h2>
+            <div class="flex flex-row w-full lg:w-[40vw] flex-wrap">
+                {% for user in series.user %}
+                    {% if user.id != app.user.id%}
+                        <a class="button bg-gray-400 hover:bg-gray-500" href="{{ url('app_user_show', {'id': user.id}) }}">{{ user.name }}</a>
+                        
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
